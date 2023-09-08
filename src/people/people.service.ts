@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { Person } from './person';
+import { Person, PersonUpdatingRequest } from './person';
 @Injectable()
 export class PeopleService {
     people: Person[] = []
@@ -18,5 +18,13 @@ export class PeopleService {
     
     save(person: Person) {
         this.people.push(person);
+    }
+
+    update(id: number, updatingPerson: PersonUpdatingRequest) {
+        this.people.forEach(function (person) {
+            if (id == person.id) {
+                person.name = updatingPerson.name;
+            }           
+        })
     }
 }
