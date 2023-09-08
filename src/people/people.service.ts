@@ -9,11 +9,7 @@ export class PeopleService {
     }
     
     findById(id: number): Person {
-        const foundPerson = this.people.find(function (person) {
-            return person.id == id
-        })
-        
-        return foundPerson
+        return this.people.find(person => person.id == id)
     }
     
     save(person: Person) {
@@ -21,10 +17,20 @@ export class PeopleService {
     }
 
     update(id: number, updatingPerson: PersonUpdatingRequest) {
-        this.people.forEach(function (person) {
+        this.people.forEach( person => {
             if (id == person.id) {
                 person.name = updatingPerson.name;
             }           
         })
+
+        /**
+         * OBS
+         * function (person) {} == person => {}
+         */
+    }
+
+    delete(id: number) {
+        const newList = this.people.filter(item => item.id != id)
+        this.people = newList;
     }
 }
