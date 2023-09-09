@@ -10,7 +10,7 @@ export class Pauta {
     description: string;
     
     @CreateDateColumn()
-    registration_date: Date;
+    registration_date?: Date;
     
     @Column({ type: 'timestamp', nullable: true })
     opening_date?: Date;
