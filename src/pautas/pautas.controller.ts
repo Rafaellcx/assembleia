@@ -1,8 +1,9 @@
-import { Body, Controller, Post, Res } from '@nestjs/common';
+import { Body, Controller, HttpStatus, Post, Res } from '@nestjs/common';
 import { PautasService } from './pautas.service';
-import { CriarPautaResource, toDomain } from './pautas.resource';
+import { CriarPautaResource, toDomain, toRepresentation } from './pautas.resource';
 import { Response } from 'express';
 import { Pauta } from './pauta.entity';
+import { ErrorResponse } from 'src/common/error.resource';
 
 @Controller('pautas')
 export class PautasController {
@@ -16,12 +17,12 @@ export class PautasController {
         const pautaDomain: Pauta = toDomain(pauta)
         const result = await this.pautaService.save(pautaDomain)
 
-        if (result.isError) {
-            return response.status(409).send({
-                "message": result.error.message
-            });
+        if (result.isError()) {
+            return response
+                .status(HttpStatus.CONFLICT)
+                .send(new ErrorResponse(result.error.message));
         }
 
-        return response.status(201).send(result.value);
+        return response.status(HttpStatus.CREATED).send(toRepresentation(result.value));
     }
 }
