@@ -1,4 +1,4 @@
-import { Body, Controller, HttpStatus, Post, Res } from '@nestjs/common';
+import { Body, Controller, Get, HttpStatus, Post, Res } from '@nestjs/common';
 import { PautasService } from './pautas.service';
 import { CriarPautaResource, toDomain, toRepresentation } from './pautas.resource';
 import { Response } from 'express';
@@ -24,5 +24,12 @@ export class PautasController {
         }
 
         return response.status(HttpStatus.CREATED).send(toRepresentation(result.value));
+    }
+
+    @Get()
+    async list(@Res() response: Response) {
+        const result = await this.pautaService.findAll();
+
+        return response.status(HttpStatus.OK).send(result.map(toRepresentation));
     }
 }
