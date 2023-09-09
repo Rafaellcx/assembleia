@@ -1,6 +1,7 @@
+import { Provider } from "@nestjs/common";
 import { DataSource } from "typeorm";
 
-export const dataBaseProviders = [
+export const dataBaseProviders: Provider[] = [
     {
         provide: 'DATA_SOURCE_MYSQL',
         useFactory: async () => {
