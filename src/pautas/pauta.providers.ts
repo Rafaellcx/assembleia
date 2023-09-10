@@ -12,4 +12,4 @@ const pautaRepository: Provider<Repository<Pauta>> = {
     inject: ['DATA_SOURCE_MYSQL']
 }
 
-export const pautaProviders:Provider[] = [pautaRepository]
+export const pautaProviders: Provider[] = [pautaRepository];

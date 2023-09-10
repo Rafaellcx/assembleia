@@ -6,6 +6,8 @@ import { Result } from 'src/common/result';
 @Injectable()
 export class PautasService {
 
+    static DEFAULT_TIME_PAUTA: number = 10;
+
     constructor(
         @Inject('PAUTA_REPOSITORY')
         private readonly pautaRepository: Repository<Pauta>
@@ -19,7 +21,7 @@ export class PautasService {
         })
 
         if (possible_data) {
-            return new Result(null, new Error("pauta existente"))
+            return new Result(null, new Error("pauta existente"));
         }
         
         pauta = await this.pautaRepository.save(pauta)
@@ -29,5 +31,19 @@ export class PautasService {
 
     async findAll(): Promise<Pauta[]> {
         return await this.pautaRepository.find();
+    }
+
+    async startSession(pauta: Pauta, minutes: number = PautasService.DEFAULT_TIME_PAUTA) : Promise<boolean> {
+
+        if (!pauta.isPossibleInitializeSession()) {
+            return false;
+        }
+
+        pauta.opening_date = new Date();
+        pauta.closing_date = new Date(pauta.opening_date.getTime() + (minutes * 60000));
+        
+        await this.pautaRepository.update(pauta.id, pauta);
+
+        return true;
     }
 }

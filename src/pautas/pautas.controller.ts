@@ -14,8 +14,8 @@ export class PautasController {
     
     @Post()
     async save(@Body() pauta: CriarPautaResource, @Res() response: Response) {
-        const pautaDomain: Pauta = toDomain(pauta)
-        const result = await this.pautaService.save(pautaDomain)
+        const pautaDomain: Pauta = toDomain(pauta);
+        const result = await this.pautaService.save(pautaDomain);
 
         if (result.isError()) {
             return response

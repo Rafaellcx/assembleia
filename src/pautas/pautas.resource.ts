@@ -22,6 +22,6 @@ export function toRepresentation(entity: Pauta) : PautaResource {
 
 export function toDomain(resource: CriarPautaResource) : Pauta {
     const pauta = new Pauta();
-    pauta.description = resource.description
+    pauta.description = resource.description;
     return pauta;
 }
