@@ -1,6 +1,6 @@
-import { Body, Controller, Get, HttpStatus, Post, Res } from '@nestjs/common';
+import { Body, Controller, Get, HttpStatus, Param, Post, Res } from '@nestjs/common';
 import { PautasService } from './pautas.service';
-import { CriarPautaResource, toDomain, toRepresentation } from './pautas.resource';
+import { CriarPautaResource, NewSessionResource, toDomain, toRepresentation } from './pautas.resource';
 import { Response } from 'express';
 import { Pauta } from './pauta.entity';
 import { ErrorResponse } from 'src/common/error.resource';
@@ -31,5 +31,26 @@ export class PautasController {
         const result = await this.pautaService.findAll();
 
         return response.status(HttpStatus.OK).send(result.map(toRepresentation));
+    }
+
+    @Post(':id/session')
+    async createSession(@Param('id') id: string, @Body() resource: NewSessionResource, @Res() response: Response) {
+        const pauta: Pauta = await this.pautaService.findById(id);
+
+        if (!pauta) {
+            return response
+                .status(HttpStatus.NOT_FOUND)
+                .send(new ErrorResponse("Pauta não encontrada."));
+        }
+
+        const success = await this.pautaService.startSession(pauta, resource.minutes);
+
+        if (success) {
+            return response
+                .status(HttpStatus.OK)
+                .send();
+        }
+        const errorResponse = new ErrorResponse("Não foi possível inicial uma sessão para esta pauta, sua sessão já foi iniciada ou encerrada.");
+        return response.status(HttpStatus.CONFLICT).send(errorResponse);
     }
 }
