@@ -4,9 +4,10 @@ import { DatabaseModule } from 'src/database/database.module';
 import { votoProviders } from './voto.providers';
 import { VotoService } from './voto.service';
 import { AssociateService } from './associate/associate.service';
+import { PautasModule } from 'src/pautas/pautas.module';
 
 @Module({
-  imports: [DatabaseModule],
+  imports: [DatabaseModule, PautasModule],
   providers: [...votoProviders, VotoService, AssociateService],
   controllers: [VotoController]
 })
