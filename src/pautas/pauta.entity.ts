@@ -2,7 +2,6 @@ import { Column, CreateDateColumn, Entity, PrimaryGeneratedColumn } from "typeor
 
 @Entity()
 export class Pauta {
-
     @PrimaryGeneratedColumn()
     id?: string;
 
