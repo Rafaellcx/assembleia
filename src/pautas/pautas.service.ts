@@ -13,7 +13,7 @@ export class PautasService {
         private readonly pautaRepository: Repository<Pauta>
     ) { }
     
-    async save(pauta: Pauta) : Promise<Result<Pauta>> {
+    async save(pauta: Pauta) : Promise<Result<Pauta, Error>> {
         const possible_data = await this.pautaRepository.findOne({
             where: {
                 description: pauta.description
