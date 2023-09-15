@@ -6,6 +6,7 @@ import { Pauta } from 'src/pautas/pauta.entity';
 import { Result } from 'src/common/result';
 import { Associate } from './associate/associate.entity';
 import { HttpError } from 'src/common/httpError';
+import { ResultVoteResource } from './result/result.resource';
 
 @Injectable()
 export class VotoService {
@@ -15,7 +16,7 @@ export class VotoService {
         private readonly associateService: AssociateService
     ) { }
     
-    async registerVoto(pauta: Pauta, cpf: string, optionVoto: OptionVoto) : Promise<Result<Voto, HttpError>> {
+    async registerVoto(pauta: Pauta, cpf: string, optionVoto: OptionVoto): Promise<Result<Voto, HttpError>> {
         if (!pauta.isInitialized()) {
             return new Result(null, new HttpError("Pauta não está em sessão.", HttpStatus.UNPROCESSABLE_ENTITY));
         }
@@ -51,5 +52,47 @@ export class VotoService {
         })
 
         return !!voto;
+    }
+
+    async getVotesByPauta(pauta: Pauta): Promise<Voto[]> {
+        return await this.votoRepository.find({
+            where: {
+                pauta: {
+                    id: pauta.id
+                }
+            }
+        })
+    }
+
+    getWinner(yes: number, no: number) : OptionVoto {
+        if (yes == no) {
+            return null;
+        }
+
+        return yes > no ? OptionVoto.YES : OptionVoto.NO;
+    }
+
+    async getResult(pauta: Pauta) : Promise<Result<ResultVoteResource, HttpError>> {
+        if (!pauta.isFinished) {
+            return new Result(null, new HttpError("Resultado ainda não disponível.",HttpStatus.NOT_FOUND));
+        }
+
+        const votes: Voto[] = await this.getVotesByPauta(pauta);
+
+        const quantityYes = votes.filter(vote => vote.optionVoto == OptionVoto.YES).length;
+        const quantityNo = votes.filter(vote => vote.optionVoto == OptionVoto.NO).length;
+
+        const winner = this.getWinner(quantityYes, quantityNo);
+
+        const result = new ResultVoteResource();
+        result.pauta = pauta.description;
+        result.opening = pauta.opening_date;
+        result.closing = pauta.closing_date;
+        result.totalVote = votes.length;
+        result.quantityYes = quantityYes;
+        result.quantityNo = quantityNo;
+        result.winningOption = winner;
+        
+        return new Result(result, null);
     }
 }
