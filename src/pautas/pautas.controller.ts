@@ -1,4 +1,4 @@
-import { Body, Controller, Get, HttpStatus, Param, Post, Res } from '@nestjs/common';
+import { Body, Controller, Get, HttpStatus, Logger, Param, Post, Res } from '@nestjs/common';
 import { PautasService } from './pautas.service';
 import { CriarPautaResource, NewSessionResource, toDomain, toRepresentation } from './pautas.resource';
 import { Response } from 'express';
@@ -7,6 +7,8 @@ import { ErrorResponse } from 'src/common/error.resource';
 
 @Controller('pautas')
 export class PautasController {
+
+    private readonly logger = new Logger(PautasController.name)
 
     constructor(
         private pautaService: PautasService
@@ -18,6 +20,7 @@ export class PautasController {
         const result = await this.pautaService.save(pautaDomain);
 
         if (result.isError()) {
+            this.logger.error('Erro ao tentar criar uma nova pauta: ' + result.error.message);
             return response
                 .status(HttpStatus.CONFLICT)
                 .send(new ErrorResponse(result.error.message));
