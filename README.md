@@ -26,6 +26,7 @@ docker run --name assembleia-api -p 3000:3000 --network net-assembleia -d assemb
 ```
 
 ## Api Documentation
+Now we can use the application through the address "http://localhost:3000/api"
 ![Alt text](image.png)
 ## ER Diagram
 ![Alt text](image-1.png)
