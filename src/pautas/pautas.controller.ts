@@ -1,11 +1,13 @@
 import { Body, Controller, Get, HttpStatus, Logger, Param, Post, Res } from '@nestjs/common';
 import { PautasService } from './pautas.service';
-import { CriarPautaResource, NewSessionResource, toDomain, toRepresentation } from './pautas.resource';
+import { CreatePautaResource, NewSessionResource, toDomain, toRepresentation } from './pautas.resource';
 import { Response } from 'express';
 import { Pauta } from './pauta.entity';
 import { ErrorResponse } from 'src/common/error.resource';
+import { ApiTags, ApiOperation } from '@nestjs/swagger';
 
 @Controller('pautas')
+@ApiTags('Pautas')    
 export class PautasController {
 
     private readonly logger = new Logger(PautasController.name)
@@ -15,7 +17,8 @@ export class PautasController {
     ) { }
     
     @Post()
-    async save(@Body() pauta: CriarPautaResource, @Res() response: Response) {
+    @ApiOperation({description: 'Create a new agenda'})    
+    async save(@Body() pauta: CreatePautaResource, @Res() response: Response) {
         const pautaDomain: Pauta = toDomain(pauta);
         const result = await this.pautaService.save(pautaDomain);
 
@@ -30,6 +33,7 @@ export class PautasController {
     }
 
     @Get()
+    @ApiOperation({description: 'List agendas'})
     async list(@Res() response: Response) {
         const result = await this.pautaService.findAll();
 
@@ -37,6 +41,7 @@ export class PautasController {
     }
 
     @Post(':id/session')
+    @ApiOperation({description: 'Start a agenda'})    
     async createSession(@Param('id') id: string, @Body() resource: NewSessionResource, @Res() response: Response) {
         const pauta: Pauta = await this.pautaService.findById(id);
 

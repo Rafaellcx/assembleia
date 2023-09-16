@@ -5,8 +5,10 @@ import { Response } from 'express';
 import { RegisterVotoResource } from './voto.resource';
 import { Pauta } from 'src/pautas/pauta.entity';
 import { ErrorResponse } from 'src/common/error.resource';
+import { ApiOperation, ApiTags } from '@nestjs/swagger';
 
 @Controller('pautas/:id/votos')
+@ApiTags('Votes')
 export class VotoController {
     constructor(
         private readonly pautasService: PautasService,
@@ -14,6 +16,7 @@ export class VotoController {
     ) { }
     
     @Post()
+    @ApiOperation({description: 'Register a vote'})    
     async registerVoto(@Param('id') idPauta: string, @Body() resource: RegisterVotoResource, @Res() response: Response) {
         const pauta: Pauta = await this.pautasService.findById(idPauta);
 

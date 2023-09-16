@@ -3,8 +3,10 @@ import { VotoService } from '../voto.service';
 import { Response } from 'express';
 import { PautasService } from 'src/pautas/pautas.service';
 import { ErrorResponse } from 'src/common/error.resource';
+import { ApiOperation, ApiTags } from '@nestjs/swagger';
 
 @Controller('agenda/:id/results')
+@ApiTags('Votes')
 export class ResultController {
 
     constructor(
@@ -13,6 +15,7 @@ export class ResultController {
     ) {}
 
     @Get()
+    @ApiOperation({description: 'Get agenda result'})    
     async getResult(@Param('id') idPauta: string, @Res() response: Response) {
         const pauta = await this.pautaService.findById(idPauta);
 
